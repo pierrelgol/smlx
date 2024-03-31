@@ -5,49 +5,135 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: pollivie <pollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/30 15:33:00 by pollivie          #+#    #+#             */
-/*   Updated: 2024/03/30 15:33:02 by pollivie         ###   ########.fr       */
+/*   Created: 2024/03/31 14:55:12 by pollivie          #+#    #+#             */
+/*   Updated: 2024/03/31 14:55:12 by pollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/smlx.h"
 
-void	vec4_mult_scalar(t_vec4 *vec, float scalar)
+/// creates a t_vec4 with value x, y, z and w
+t_vec4	vec4_create(float x, float y, float z, float w)
 {
-	vec->x *= scalar;
-	vec->y *= scalar;
-	vec->z *= scalar;
-	vec->w *= scalar;
+	return ((t_vec4){x, y, z, w});
 }
 
-void	vec4_mult_vec4(t_vec4 *a, t_vec4 *b, t_vec4 *c)
+/// creates a t_vec3 from a t_vec4 with value x, y, z (drop the w)
+t_vec3	vec4_to_vec3(t_vec4 v1)
 {
-	c->x = a->x * b->x;
-	c->y = a->y * b->y;
-	c->z = a->z * b->z;
-	c->w = a->w * b->w;
+	return ((t_vec3){v1.x, v1.y, v1.z});
 }
 
-void	vec4_rot_x(t_vec4 *a, t_vec4 *r, t_vec4 *c)
+/// creates a t_vec4 from a t_vec3 with value x, y, z, w
+t_vec4	vec4_from_vec3(t_vec3 v1, float w)
 {
-	c->x = a->x;
-	c->y = a->y * r->y - a->z * r->z;
-	c->z = a->y * r->z + a->z * r->y;
-	c->w = a->w;
+	return ((t_vec4){v1.x, v1.y, v1.z, w});
 }
 
-void	vec4_rot_y(t_vec4 *a, t_vec4 *r, t_vec4 *c)
+/// creates a t_vec4 with value x, y, z and w set to 1.0f
+t_vec4	vec4_create_1(void)
 {
-	c->x = a->x * r->x + a->z * r->z;
-	c->y = a->y;
-	c->z = -a->x * r->z + a->z * r->x;
-	c->w = a->w;
+	return ((t_vec4){1.0f, 1.0f, 1.0f, 1.0f});
 }
 
-void	vec4_rot_z(t_vec4 *a, t_vec4 *r, t_vec4 *c)
+/// creates a t_vec4 with value x, y, z and w set to 0.0f
+t_vec4	vec4_create_0(void)
 {
-	c->x = a->x * r->x - a->y * r->y;
-	c->y = a->x * r->y + a->y * r->x;
-	c->z = a->z;
-	c->w = a->w;
+	return ((t_vec4){0.0f, 0.0f, 0.0f, 0.0f});
+}
+
+/// add and the x, y, z, and w of v1 and v2 and returns the result
+t_vec4	vec4_add(t_vec4 v1, t_vec4 v2)
+{
+	t_vec4	result;
+
+	result.x = v1.x + v2.x;
+	result.y = v1.y + v2.y;
+	result.z = v1.z + v2.z;
+	result.w = v1.w + v2.w;
+	return (result);
+}
+
+/// sub and the x, y, z, and w of v1 and v2 and returns the result
+t_vec4	vec4_sub(t_vec4 v1, t_vec4 v2)
+{
+	t_vec4	result;
+
+	result.x = v1.x - v2.x;
+	result.y = v1.y - v2.y;
+	result.z = v1.z - v2.z;
+	result.w = v1.w - v2.w;
+	return (result);
+}
+
+/// div and the x, y, z, and w of v1 and v2 and returns the result
+t_vec4	vec4_div(t_vec4 v1, t_vec4 v2)
+{
+	t_vec4	result;
+
+	result.x = v1.x / v2.x;
+	result.y = v1.y / v2.y;
+	result.z = v1.z / v2.z;
+	result.w = v1.w / v2.w;
+	return (result);
+}
+
+/// mult and the x, y, z, and w of v1 and v2 and returns the result
+t_vec4	vec4_mult(t_vec4 v1, t_vec4 v2)
+{
+	t_vec4	result;
+
+	result.x = v1.x * v2.x;
+	result.y = v1.y * v2.y;
+	result.z = v1.z * v2.z;
+	result.w = v1.w * v2.w;
+	return (result);
+}
+
+/// returns the result of x * x + y * y + z * z + w * w
+float	vec4_len_square(t_vec4 vec)
+{
+	return (vec.x * vec.x + vec.y * vec.y + vec.z * vec.z + vec.w * vec.w);
+}
+
+/// returns the result of sqrt(x * x + y * y + z * z + w * w)
+float	vec4_length(t_vec4 vec)
+{
+	return (sqrtf(vec4_len_square(vec)));
+}
+
+/// normalize vec with it's length :
+/// vec->x / (sqrt(x * x + y * y + z * z + w * w))
+/// vec->y / (sqrt(x * x + y * y + z * z + w * w))
+/// vec->z / (sqrt(x * x + y * y + z * z + w * w))
+/// vec->z / (sqrt(x * x + y * y + z * z + w * w))
+void	vec4_normalize(t_vec4 *vec)
+{
+	float	len;
+
+	len = vec4_length(*vec);
+	vec->x /= len;
+	vec->y /= len;
+	vec->z /= len;
+	vec->w /= len;
+}
+
+/// normalize vec with it's length and return the copy vec
+/// vec->x / (sqrt(x * x + y * y + z * z + w * w))
+/// vec->y / (sqrt(x * x + y * y + z * z + w * w))
+/// vec->z / (sqrt(x * x + y * y + z * z + w * w))
+/// vec->z / (sqrt(x * x + y * y + z * z + w * w))
+t_vec4	vec4_normalized(t_vec4 vec)
+{
+	vec4_normalize(&vec);
+	return (vec);
+}
+
+/// returns the dot product of v1 and v2
+float	vec4_dot(t_vec4 v1, t_vec4 v2)
+{
+	float	p;
+
+	p = v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;
+	return (p);
 }
