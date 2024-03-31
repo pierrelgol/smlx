@@ -349,3 +349,78 @@ t_mat4x4 *mat4_euler_xyz(t_allocator *allocator, float x_ar, float y_ar, float z
 	allocator->destroy(allocator, rz);
 	return (out);
 }
+
+/// returns a forward vector relative to the provided matrix
+t_vec3	mat4_forward(t_mat4x4 *matrix)
+{
+	t_vec3 forward;
+
+	forward.x = -matrix->elements[2];
+	forward.y = -matrix->elements[6];
+	forward.z = -matrix->elements[10];
+	vec3_normalize(&forward);
+	return (forward);
+}
+
+
+
+/// returns a backward vector relative to the provided matrix
+t_vec3	mat4_backward(t_mat4x4 *matrix)
+{
+	t_vec3 backward;
+
+	backward.x = matrix->elements[2];
+	backward.y = matrix->elements[6];
+	backward.z = matrix->elements[10];
+	vec3_normalize(&backward);
+	return (backward);
+}
+
+/// returns a upward vector relative to the provided matrix
+t_vec3	mat4_up(t_mat4x4 *matrix)
+{
+	t_vec3 upward;
+
+	upward.x = matrix->elements[1];
+	upward.y = matrix->elements[5];
+	upward.z = matrix->elements[9];
+	vec3_normalize(&upward);
+	return (upward);
+}
+
+/// returns a downward vector relative to the provided matrix
+t_vec3	mat4_down(t_mat4x4 *matrix)
+{
+	t_vec3 downward;
+
+	downward.x = -matrix->elements[1];
+	downward.y = -matrix->elements[5];
+	downward.z = -matrix->elements[9];
+	vec3_normalize(&downward);
+	return (downward);
+}
+
+/// returns a left vector relative to the provided matrix
+t_vec3	mat4_left(t_mat4x4 *matrix)
+{
+	t_vec3 right;
+
+	right.x = -matrix->elements[0];
+	right.y = -matrix->elements[4];
+	right.z = -matrix->elements[8];
+	vec3_normalize(&right);
+	return (right);
+}
+
+/// returns a right vector relative to the provided matrix
+t_vec3	mat4_right(t_mat4x4 *matrix)
+{
+	t_vec3 left;
+
+	left.x = -matrix->elements[0];
+	left.y = -matrix->elements[4];
+	left.z = -matrix->elements[8];
+	vec3_normalize(&left);
+	return (left);
+}
+
