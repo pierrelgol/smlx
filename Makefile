@@ -13,50 +13,46 @@
 # Compiler and flags
 CC := clang
 RM := rm -f
-CFLAGS := -Wall  -Wextra -g3
+CFLAGS := -Wall -Werror -Wextra
 
 # Executable name
-NAME := smlx
+lib := libsmlx.a
 
 # Directories
 INC_DIR := ./include
-SRC_DIRS := ./source
-LIB_DIR := ./lib
-MLX_DIR := ./mlx
+
+# Sources
+SRC_DIRS := ./source/camera          \
+            ./source/helpers         \
+            ./source/mat4            \
+            ./source/quat            \
+            ./source/vec2            \
+            ./source/vec3            \
+            ./source/vec4            \
+            ./source/view            \
+            ./source/mlx             \
+            ./source/smlx            \
+
 
 # Source files
-SRCS := $(wildcard $(addsuffix /*.c,$(SRC_DIRS)))
+SRCS := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 OBJS := $(SRCS:.c=.o)
 
-# Libraries
-CLIB := $(LIB_DIR)/libclib.a
-LIBMLX := $(MLX_DIR)/libmlx.a
-
 # Targets
-.PHONY: all clean fclean re plib mlx
+.PHONY: all clean fclean re
 
-all: $(NAME)
+all: $(lib)
 
-$(NAME): $(OBJS) clib mlx
-	$(CC) $(CFLAGS) -o $@ $(OBJS) -L$(LIB_DIR) -lclib -L$(MLX_DIR) -lmlx -lXext -lX11 -lm
+$(lib): $(OBJS)
+	ar -rcs $@ $(OBJS)
 
 %.o: %.c
 	$(CC) $(CFLAGS) -I$(INC_DIR) -c $< -o $@
 
-clib:
-	$(MAKE) -C $(LIB_DIR)
-
-mlx:
-	$(MAKE) -C $(MLX_DIR)
-
 clean:
 	$(RM) $(OBJS)
-	$(MAKE) -C $(LIB_DIR) clean
-	$(MAKE) -C $(MLX_DIR) clean
 
 fclean: clean
-	$(RM) $(NAME)
-	$(MAKE) -C $(LIB_DIR) fclean
-	$(MAKE) -C $(MLX_DIR) clean
+	$(RM) $(lib)
 
 re: fclean all
