@@ -13,10 +13,10 @@
 #ifndef SMLX_H
 # define SMLX_H
 
-# include "mlx.h"
 # include <math.h>
 # include <stdbool.h>
 # include <stdint.h>
+# include <stdlib.h>
 
 # define S_PI (3.14159265358979323846f)
 # define S_2PI (2.0 * S_PI)
@@ -28,6 +28,8 @@
 # define S_FLOAT_EPSILON (1.192092896e-07f)
 # define S_DEG_TO_RAD_MULT (S_PI / 180.0f)
 # define S_RAD_TO_DEG_MULT (180.0f / S_PI)
+# define MIN_SCREEN_WIDTH 800
+# define MIN_SCREEN_HEIGHT 600
 
 typedef struct s_vec2
 {
@@ -177,13 +179,6 @@ typedef struct s_mlx_resources
 	bool				is_dirty;
 
 }						t_mlx_resources;
-
-typedef struct s_smlx_ressources
-{
-	t_mlx_resources		mlx;
-	t_view				view;
-	t_camera			camera;
-}						t_smlx_ressources;
 
 void					*smlx_bzero(void *b, uint64_t len);
 float					fmaxf(float a, float b);
