@@ -1,53 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quat.c                                             :+:      :+:    :+:   */
+/*   quat2.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: pollivie <pollivie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/03/31 17:36:37 by pollivie          #+#    #+#             */
-/*   Updated: 2024/03/31 17:36:37 by pollivie         ###   ########.fr       */
+/*   Created: 2024/04/01 13:56:56 by pollivie          #+#    #+#             */
+/*   Updated: 2024/04/01 13:56:57 by pollivie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/smlx.h"
-
-/// returns a default quat {0,0,0,1f}
-t_quat	quat_identify(void)
-{
-	return ((t_quat){.x = 0.0f, .y = 0.0f, .z = 0.0f, .w = 1.0f});
-}
-
-/// returns the normal of a quat
-float	quat_normal(t_quat q)
-{
-	return (sqrtf(q.x * q.x + q.y * q.y + q.z * q.z + q.w * q.w));
-}
-
-/// normalize the quat
-void	quat_normalize(t_quat *q)
-{
-	float	n;
-
-	n = quat_normal(*q);
-	q->x /= n;
-	q->y /= n;
-	q->z /= n;
-	q->w /= n;
-}
-
-/// returns a normalized copy of the quat
-t_quat	quat_normalized(t_quat q)
-{
-	quat_normalize(&q);
-	return (q);
-}
-
-/// returns the conjugate copy of the quat
-t_quat	quat_conjugate(t_quat q)
-{
-	return ((t_quat){.x = -q.x, .y = -q.y, .z = -q.z, .w = q.w});
-}
+#include "../../include/smlx.h"
 
 /// returns the inverse copy of the quat
 t_quat	quat_inverse(t_quat q)
@@ -117,70 +80,4 @@ t_mat4x4	quat_to_rotation_matrix(t_quat q, t_vec3 center)
 	o[14] = 0.0f;
 	o[15] = 1.0f;
 	return (out);
-}
-
-t_quat	quat_from_axis_angle(t_vec3 axis, float angle, bool normalize)
-{
-	t_quat	result;
-	float	half_angle;
-	float	sin;
-	float	cos;
-
-	half_angle = angle * 0.5;
-	sin = sinf(half_angle);
-	cos = cosf(half_angle);
-	result = (t_quat){
-		.x = sin * axis.x,
-		.y = sin * axis.y,
-		.z = sin * axis.z,
-		.w = cos,
-	};
-	if (normalize)
-		return (quat_normalized(result));
-	return (result);
-}
-
-t_quat	quat_slerp(t_quat q1, t_quat q2, float p)
-{
-	t_quat	out;
-	t_quat	n1;
-	t_quat	n2;
-	float	dot;
-	float	theta_0;
-	float	theta;
-	float	sin_theta;
-	float	sin_theta_0;
-	float	s0;
-	float	s1;
-
-	n1 = quat_normalized(q1);
-	n2 = quat_normalized(q2);
-	dot = quat_dot(n1, n2);
-	if (dot < 0.0f)
-	{
-		n1.x = -n1.x;
-		n1.y = -n1.y;
-		n1.z = -n1.z;
-		n1.w = -n1.w;
-		dot = -dot;
-	}
-	if (dot > 0.9995f)
-	{
-		out = (t_quat){
-			.x = n1.x + ((n2.x - n1.x) * p),
-			.y = n1.y + ((n2.y - n1.y) * p),
-			.z = n1.z + ((n2.z - n1.z) * p),
-			.w = n1.w + ((n2.w - n1.w) * p),
-		};
-		return (quat_normalized(out));
-	}
-	theta_0 = cosf(dot);
-	theta = theta_0 * p;
-	sin_theta = sinf(theta);
-	sin_theta_0 = sinf(theta_0);
-	s0 = cosf(theta) - dot * sin_theta / sin_theta_0;
-	s1 = sin_theta / sin_theta_0;
-	return ((t_quat){.x = (n1.x * s0) + (n2.x * s1), .y = (n1.y * s0) + (n2.y
-			* s1), .z = (n1.z * s0) + (n2.z * s1), .w = (n1.w * s0) + (n2.w
-			* s1)});
 }

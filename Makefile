@@ -11,7 +11,7 @@
 # **************************************************************************** #
 
 # Compiler and flags
-CC := clang
+CC := gcc
 RM := rm -f
 CFLAGS := -Wall -Werror -Wextra -flto -finline-functions
 
@@ -20,11 +20,11 @@ lib := libsmlx.a
 
 # Directories
 INC_DIR := ./include
-SRC_DIRS := ./source
+SRC_DIRS := ./source/camera ./source/helpers ./source/mat4 ./source/quat ./source/vec2 ./source/vec3 ./source/vec4 ./source/view
 MLX_DIR := ./mlx
 
 # Source files
-SRCS := $(wildcard $(addsuffix /*.c,$(SRC_DIRS)))
+SRCS := $(foreach dir,$(SRC_DIRS),$(wildcard $(dir)/*.c))
 OBJS := $(SRCS:.c=.o)
 
 # Libraries

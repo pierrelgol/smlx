@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/smlx.h"
+#include "../../include/smlx.h"
 
 static void	projection_matrix_choose(t_view *v, t_matproj_type choice)
 {
