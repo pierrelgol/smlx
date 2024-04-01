@@ -13,7 +13,7 @@
 # Compiler and flags
 CC := clang
 RM := rm -f
-CFLAGS := -Wall  -Wextra -g3
+CFLAGS := -Wall -Werror -Wextra -g3
 
 # Executable name
 NAME := smlx

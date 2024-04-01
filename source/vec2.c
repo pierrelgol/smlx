@@ -112,6 +112,18 @@ t_vec2	vec2_mult(t_vec2 v1, t_vec2 v2)
 	return (result);
 }
 
+/// mult the x and y of v1 by scalar and returns the result
+t_vec2 vec2_mult_scalar(t_vec2 v1, float scalar)
+{
+	return ((t_vec2){.x = v1.x * scalar, .y = v1.y * scalar});
+}
+
+/// mult the x and y of v1 and v2 and add v3 returns the result
+t_vec2 vec2_mult_add(t_vec2 v1, t_vec2 v2, t_vec3 v3)
+{
+	return (t_vec2){.x = v1.x * v2.x + v3.x, .y = v1.y * v2.y + v3.y};
+}
+
 /// returns the result of x * x + y * y
 float	vec2_len_square(t_vec2 vec)
 {
@@ -163,4 +175,14 @@ float	vec2_distance(t_vec2 v1, t_vec2 v2)
 	distance.x = (v1.x - v2.x);
 	distance.y = (v1.y - v2.y);
 	return (vec2_length(distance));
+}
+
+/// returns the squared distance of v1 and v2 (avoid sqrt)
+float vec2_ditance_squared(t_vec2 v1, t_vec2 v2)
+{
+	t_vec2	distance;
+
+	distance.x = (v1.x - v2.x);
+	distance.y = (v1.y - v2.y);
+	return (vec2_len_square(distance));
 }
