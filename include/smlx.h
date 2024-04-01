@@ -13,9 +13,10 @@
 #ifndef SMLX_H
 #define SMLX_H
 
-#include "clib.h"
 #include "mlx.h"
 #include <math.h>
+#include <stdbool.h>
+#include <stdint.h>
 
 #define S_PI 3.14159265358979323846f
 #define S_2PI (2.0 * S_PI)
@@ -102,12 +103,14 @@ typedef struct s_vec4
 				float z;
 				float b;
 				float p;
+				float width;
 			};
 			union
 			{
 				float w;
 				float a;
 				float q;
+				float height;
 			};
 		};
 	};
@@ -137,6 +140,52 @@ typedef struct s_camera
 	t_mat4x4 view_matrix;
 } t_camera;
 
+typedef enum e_matproj_type
+{
+	PROJECT_ORTHO,
+	PROJECT_ISOME,
+	PROJECT_PERSP,
+
+} t_matproj_type;
+
+typedef struct s_view
+{
+	t_vec4         rect;
+	float          fov;
+	float          near_clip;
+	float          far_clip;
+	t_matproj_type type;
+	t_mat4x4       projection;
+
+} t_view;
+
+typedef void *t_handle;
+
+typedef struct s_mlx_resources
+{
+	t_handle mlx_ptr;
+	t_handle mlx_win;
+	int32_t  win_height;
+	int32_t  win_width;
+	t_handle mlx_img;
+	int      img_lsize;
+	int      img_bpp;
+	int      img_height;
+	int      img_width;
+	int      img_endian;
+	char    *img_pixels;
+	bool     is_dirty;
+
+} t_mlx_resources;
+
+typedef struct s_smlx_ressources
+{
+	t_mlx_resources mlx;
+	t_view          view;
+	t_camera        camera;
+} t_smlx_ressources;
+
+void   *smlx_bzero(void *b, uint64_t len);
 float   fmaxf(float a, float b);
 float   fminf(float a, float b);
 float   stepf(float edge, float x);
@@ -528,19 +577,19 @@ t_quat quat_slerp(t_quat q1, t_quat q2, float p);
 t_camera camera_create(void);
 
 /// reset the current camera to the default value
-void     camera_reset(t_camera *c);
+void camera_reset(t_camera *c);
 
 /// returns a copy of the current postion vector of the camera c
-t_vec3   camera_position_get(t_camera *c);
+t_vec3 camera_position_get(t_camera *c);
 
 /// sets the current postion vector of the camera c
-void     camera_position_set(t_camera *c, t_vec3 position);
+void camera_position_set(t_camera *c, t_vec3 position);
 
 /// returns a copy of the current euler_rotation vector of the camera c
-t_vec3   camera_euler_rotation_get(t_camera *c);
+t_vec3 camera_euler_rotation_get(t_camera *c);
 
 /// sets the current euler_rotation vector of the camera c
-void     camera_euler_rotation_set(t_camera *c, t_vec3 rotation);
+void camera_euler_rotation_set(t_camera *c, t_vec3 rotation);
 
 /// returns a copy of the current camera's view matrix
 t_mat4x4 camera_view_matrix_get(t_camera *c);
@@ -586,5 +635,11 @@ void camera_pitch(t_camera *c, float amount);
 
 /// adjust the current camera's yaw by the amount given
 void camera_yaw(t_camera *c, float amount);
+
+//----------------------------------------------------------------------------//
+
+void view_create(t_vec4 rect, t_vec3 param, t_matproj_type type, t_view *out);
+void view_resize(t_view *v, t_vec4 rect);
+void view_destroy(t_view *v);
 
 #endif
